@@ -110,12 +110,14 @@
     }
 
     .option {
+      --inner-frame-inset: 18px;
+      --inner-frame-radius: 22px;
       position: relative;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       min-height: 320px;
-      padding: 28px;
+      padding: calc(var(--inner-frame-inset) + 2px);
       border-radius: 28px;
       border: 1px solid rgba(255, 255, 255, 0.14);
       background:
@@ -149,8 +151,8 @@
     .option::after {
       content: "";
       position: absolute;
-      inset: 18px;
-      border-radius: 22px;
+      inset: var(--inner-frame-inset);
+      border-radius: var(--inner-frame-radius);
       border: 1px solid rgba(255, 255, 255, 0.08);
       pointer-events: none;
     }
@@ -165,7 +167,7 @@
       display: inline-block;
       margin-bottom: 18px;
       padding: 6px 10px;
-      border-radius: 999px;
+      border-radius: 12px;
       background: var(--neon-soft);
       color: var(--neon);
       font-family: "Share Tech Mono", monospace;
@@ -232,16 +234,6 @@
         rgba(4, 14, 9, 0.56);
     }
 
-    .footer-note {
-      margin-top: 18px;
-      text-align: center;
-      color: rgba(248, 242, 232, 0.58);
-      font-family: "Share Tech Mono", monospace;
-      font-size: 0.78rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
     @media (max-width: 760px) {
       .shell {
         width: min(100% - 20px, 1120px);
@@ -257,8 +249,10 @@
       }
 
       .option {
+        --inner-frame-inset: 12px;
+        --inner-frame-radius: 20px;
         min-height: 210px;
-        padding: 18px;
+        padding: calc(var(--inner-frame-inset) + 8px);
       }
 
       .option-foot {
@@ -311,8 +305,6 @@
         </div>
       </a>
     </section>
-
-    <p class="footer-note">Classic e Laurea puntano ai due menu presenti in questa cartella.</p>
   </main>
 </body>
 
