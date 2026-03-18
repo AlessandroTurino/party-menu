@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="it">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu Laurea</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=Manrope:wght@400;600;700&family=Share+Tech+Mono&display=swap");
+
+    :root {
+      --bg-1: #07110b;
+      --bg-2: #111b14;
+      --bg-3: #efe2cb;
+      --ink: #f8f2e8;
+      --ink-soft: rgba(248, 242, 232, 0.74);
+      --panel: rgba(255, 249, 239, 0.1);
+      --panel-strong: rgba(255, 250, 242, 0.14);
+      --line: rgba(146, 255, 176, 0.22);
+      --gold: #d9a35f;
+      --wine: #9d4636;
+      --neon: #87ffac;
+      --neon-soft: rgba(135, 255, 172, 0.18);
+      --shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: "Manrope", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(135, 255, 172, 0.14), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(157, 70, 54, 0.22), transparent 26%),
+        linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 45%, #2e271f 70%, var(--bg-3) 130%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(rgba(135, 255, 172, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(135, 255, 172, 0.03) 1px, transparent 1px),
+        repeating-linear-gradient(180deg, transparent 0, transparent 4px, rgba(135, 255, 172, 0.03) 5px);
+      background-size: 100% 4px, 32px 32px, 100% 7px;
+      opacity: 0.55;
+      pointer-events: none;
+    }
+
+    .shell {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 40px 0 48px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 28px 20px 22px;
+      animation: rise 800ms ease-out both;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(8, 19, 12, 0.46);
+      backdrop-filter: blur(8px);
+      color: var(--neon);
+      font-family: "Share Tech Mono", monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-family: "Cormorant Garamond", serif;
+      font-size: clamp(3rem, 8vw, 5.8rem);
+      line-height: 0.95;
+      letter-spacing: 0.03em;
+      margin-bottom: 14px;
+      text-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
+    }
+
+    .hero p {
+      width: min(680px, 100%);
+      margin: 0 auto;
+      color: var(--ink-soft);
+      font-size: clamp(1rem, 2vw, 1.08rem);
+      line-height: 1.6;
+    }
+
+    .selector {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+      margin-top: 26px;
+    }
+
+    .option {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 320px;
+      padding: 28px;
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background:
+        linear-gradient(180deg, rgba(255, 252, 245, 0.12), rgba(255, 252, 245, 0.07)),
+        rgba(5, 12, 8, 0.48);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+      animation: rise 900ms ease-out both;
+    }
+
+    .option:hover,
+    .option:focus-visible {
+      transform: translateY(-6px);
+      border-color: rgba(135, 255, 172, 0.38);
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.42), 0 0 28px rgba(135, 255, 172, 0.12);
+      outline: none;
+    }
+
+    .option::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(140deg, rgba(135, 255, 172, 0.08), transparent 38%, rgba(217, 163, 95, 0.12));
+      pointer-events: none;
+    }
+
+    .option::after {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      pointer-events: none;
+    }
+
+    .option-head,
+    .option-foot {
+      position: relative;
+      z-index: 1;
+    }
+
+    .option-code {
+      display: inline-block;
+      margin-bottom: 18px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--neon-soft);
+      color: var(--neon);
+      font-family: "Share Tech Mono", monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .option h2 {
+      font-family: "Cormorant Garamond", serif;
+      font-size: clamp(2.4rem, 5vw, 3.6rem);
+      margin-bottom: 12px;
+      color: #fff7ea;
+    }
+
+    .option-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-top: 28px;
+    }
+
+    .option-tag {
+      font-size: 0.92rem;
+      color: #f1e2c8;
+    }
+
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: var(--panel-strong);
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    .option.classic .option-code,
+    .option.classic .cta {
+      background: rgba(217, 163, 95, 0.14);
+      color: #ffdcae;
+    }
+
+    .option.classic {
+      background:
+        radial-gradient(circle at top right, rgba(217, 163, 95, 0.16), transparent 32%),
+        linear-gradient(180deg, rgba(255, 248, 239, 0.16), rgba(255, 248, 239, 0.08)),
+        rgba(31, 19, 12, 0.54);
+    }
+
+    .option.laurea .option-code,
+    .option.laurea .cta {
+      background: rgba(135, 255, 172, 0.14);
+      color: var(--neon);
+    }
+
+    .option.laurea {
+      background:
+        radial-gradient(circle at top left, rgba(135, 255, 172, 0.14), transparent 34%),
+        linear-gradient(180deg, rgba(8, 24, 14, 0.2), rgba(8, 24, 14, 0.08)),
+        rgba(4, 14, 9, 0.56);
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      text-align: center;
+      color: rgba(248, 242, 232, 0.58);
+      font-family: "Share Tech Mono", monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 760px) {
+      .shell {
+        width: min(100% - 20px, 1120px);
+        padding: 20px 0 24px;
+      }
+
+      .hero {
+        padding: 20px 6px 14px;
+      }
+
+      .selector {
+        grid-template-columns: 1fr;
+      }
+
+      .option {
+        min-height: 210px;
+        padding: 18px;
+      }
+
+      .option-foot {
+        align-items: flex-start;
+        flex-direction: column;
+        padding-top: 18px;
+        gap: 12px;
+      }
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="shell">
+    <header class="hero">
+      <p class="eyebrow">Menu launcher / laurea edition</p>
+      <h1>Scegli il menu</h1>
+    </header>
+
+    <section class="selector" aria-label="Selezione menu">
+      <a class="option classic" href="./Menu%20Laurea%20-%20Classic/index.html">
+        <div class="option-head">
+          <span class="option-code">classic.mode</span>
+          <h2>Classic</h2>
+        </div>
+        <div class="option-foot">
+          <span class="cta">Apri</span>
+        </div>
+      </a>
+
+      <a class="option laurea" href="./Menu%20Laurea%20-%20Hacker/index.html">
+        <div class="option-head">
+          <span class="option-code">laurea.mode</span>
+          <h2>Laurea</h2>
+        </div>
+        <div class="option-foot">
+          <span class="cta">Apri</span>
+        </div>
+      </a>
+    </section>
+
+    <p class="footer-note">Classic e Laurea puntano ai due menu presenti in questa cartella.</p>
+  </main>
+</body>
+
+</html>

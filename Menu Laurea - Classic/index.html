@@ -1,0 +1,57 @@
+﻿<!doctype html>
+<html lang="it">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu di Laurea Interattivo</title>
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/typography.css">
+  <link rel="stylesheet" href="styles/layout.css">
+  <link rel="stylesheet" href="styles/cards.css">
+  <link rel="stylesheet" href="styles/icons.css">
+  <link rel="stylesheet" href="styles/allergens.css">
+  <link rel="stylesheet" href="styles/animations.css">
+  <script src="scripts/menu.js" defer></script>
+</head>
+
+<body>
+  <main class="shell">
+    <header class="hero">
+      <h1>Menu di Laurea</h1>
+      <!--<p>Tocca la card: si gira, mostra la categoria e dopo 10 secondi la inserisce nel menu finale.</p>-->
+    </header>
+
+    <div class="experience">
+      <section class="menu-board">
+        <h2>Menu Laurea Dotturino</h2>
+        <!--<p class="board-note">Le voci confermate appariranno qui, categoria dopo categoria.</p>-->
+        <div id="revealedMenu" class="revealed-menu" aria-live="polite"></div>
+      </section>
+
+      <section id="cardStage" class="card-stage" aria-live="polite">
+        <article id="revealCard" class="reveal-card" role="button" tabindex="0"
+          aria-label="Tocca o clicca per girare la card">
+          <div class="card-inner">
+            <div class="card-face card-front">
+              <p class="face-label">Categoria</p>
+              <div id="frontIcon" class="hero-icon"></div>
+              <h2 id="frontCategory"></h2>
+              <p id="actionHint" class="tap-hint">Toccami</p>
+            </div>
+
+            <div class="card-face card-back">
+              <p class="face-label">Portate</p>
+              <h2 id="backCategory"></h2>
+              <ul id="backItems" class="card-items"></ul>
+            </div>
+          </div>
+        </article>
+
+        <p id="stepProgress" class="step-progress"></p>
+      </section>
+    </div>
+  </main>
+</body>
+
+</html>

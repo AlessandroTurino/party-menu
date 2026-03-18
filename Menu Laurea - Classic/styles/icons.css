@@ -1,0 +1,26 @@
+﻿.icon-stroke {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 220;
+  stroke-dashoffset: 220;
+  animation: draw-icon var(--draw-duration, 950ms) ease forwards;
+  animation-delay: var(--draw-delay, 0ms);
+}
+
+.icon-fill {
+  fill: color-mix(in srgb, var(--accent-2) 35%, white);
+  opacity: 0;
+  animation: fill-icon var(--fill-duration, 550ms) ease forwards var(--fill-delay, 420ms);
+}
+
+.icon-accent {
+  fill: none;
+  stroke: var(--accent-2);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  opacity: 0;
+  animation: accent-pulse 1.5s ease-in-out infinite 650ms;
+}

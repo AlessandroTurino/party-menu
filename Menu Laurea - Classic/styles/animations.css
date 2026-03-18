@@ -1,0 +1,60 @@
+﻿@keyframes draw-icon {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes fill-icon {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes accent-pulse {
+  0%,
+  100% {
+    opacity: 0.1;
+    transform: translateY(3px);
+  }
+
+  50% {
+    opacity: 0.9;
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes section-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes card-pop {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes soft-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

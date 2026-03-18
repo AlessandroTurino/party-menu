@@ -1,0 +1,64 @@
+﻿.allergen-badges {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.28rem;
+  align-items: center;
+  margin-left: 0.45rem;
+  vertical-align: middle;
+}
+
+.allergen-badge {
+  min-height: 1.42rem;
+  padding: 0.18rem 0.5rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #fffdf8;
+  box-shadow: 0 1px 4px rgba(62, 53, 43, 0.18);
+  vertical-align: middle;
+}
+
+.allergen-glutine,
+.allergen-frutta-a-guscio,
+.allergen-semi-di-sesamo,
+.allergen-arachidi,
+.allergen-lupini,
+.allergen-alcol {
+  background: #d4a13f;
+}
+
+.allergen-sedano,
+.allergen-soia {
+  background: #62d36b;
+}
+
+.allergen-pesce,
+.allergen-latte {
+  background: #79b6d6;
+}
+
+.allergen-crostacei {
+  background: #e86e75;
+}
+
+.allergen-uova,
+.allergen-senape {
+  background: #f1c53f;
+  color: #6b4d12;
+}
+
+.allergen-molluschi {
+  background: #ef9a70;
+}
+
+.allergen-anidride-solforosa-e-solfiti {
+  background: #8da8b8;
+}
+
+.allergen-nichel {
+  background: #8d7a6a;
+}

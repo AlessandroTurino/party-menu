@@ -1,0 +1,1038 @@
+﻿<!doctype html>
+<html lang="it">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu di Laurea Interattivo</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+    :root {
+      --bg-1: #010402;
+      --bg-2: #02110a;
+      --bg-3: #042515;
+      --ink: #7cff9b;
+      --muted: #4bdd73;
+      --panel: rgba(2, 14, 9, 0.94);
+      --accent: #8effa9;
+      --warning: #d8ff68;
+      --border: rgba(124, 255, 155, 0.22);
+      --shadow-strong: 0 0 52px rgba(24, 201, 93, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: "Share Tech Mono", monospace;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(24, 201, 93, 0.15), transparent 32%),
+        radial-gradient(circle at 84% 16%, rgba(142, 255, 169, 0.08), transparent 28%),
+        radial-gradient(circle at 70% 78%, rgba(12, 122, 53, 0.18), transparent 34%),
+        linear-gradient(140deg, var(--bg-1), var(--bg-2) 52%, var(--bg-3));
+      padding: 30px 18px 50px;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(rgba(124, 255, 155, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124, 255, 155, 0.04) 1px, transparent 1px),
+        repeating-linear-gradient(180deg, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 3px, rgba(124, 255, 155, 0.03) 4px);
+      background-size: 100% 4px, 36px 36px, 100% 6px;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    .shell {
+      width: min(1040px, 100%);
+      margin: 0 auto;
+    }
+
+    .experience {
+      min-height: calc(100vh - 80px);
+      display: grid;
+      place-items: center;
+      animation: soft-rise 850ms ease-out both;
+    }
+
+    .terminal-window {
+      width: min(920px, 100%);
+      min-height: 680px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(6, 22, 14, 0.98), rgba(1, 7, 4, 0.98));
+      box-shadow: var(--shadow-strong);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .terminal-window::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(rgba(124, 255, 155, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124, 255, 155, 0.03) 1px, transparent 1px);
+      background-size: 100% 4px, 28px 28px;
+      pointer-events: none;
+      opacity: 0.34;
+    }
+
+    .terminal-chrome {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(124, 255, 155, 0.15);
+      background: rgba(4, 18, 11, 0.92);
+      position: relative;
+      z-index: 1;
+    }
+
+    .terminal-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(124, 255, 155, 0.22);
+      box-shadow: 0 0 10px rgba(124, 255, 155, 0.18);
+    }
+
+    .terminal-dot.is-live {
+      background: var(--accent);
+    }
+
+    .terminal-title {
+      color: var(--accent);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-size: 0.84rem;
+      text-align: center;
+      flex: 1;
+    }
+
+    .terminal-meta {
+      color: var(--muted);
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
+
+    .terminal-screen {
+      min-height: 624px;
+      padding: 26px 22px 22px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      z-index: 1;
+    }
+
+    .terminal-output {
+      display: grid;
+      gap: 0.45rem;
+      align-content: start;
+      flex: 1;
+      overflow: auto;
+      padding-right: 8px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(124, 255, 155, 0.32) transparent;
+    }
+
+    .terminal-output::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .terminal-output::-webkit-scrollbar-thumb {
+      background: rgba(124, 255, 155, 0.32);
+      border-radius: 999px;
+    }
+
+    .terminal-line {
+      color: var(--ink);
+      line-height: 1.55;
+      white-space: pre-wrap;
+      word-break: break-word;
+      text-shadow: 0 0 9px rgba(124, 255, 155, 0.18);
+    }
+
+    .terminal-line.system {
+      color: var(--muted);
+    }
+
+    .terminal-line.command {
+      color: var(--warning);
+    }
+
+    .terminal-line.device {
+      color: #ff4d4d;
+      text-shadow: 0 0 12px rgba(255, 77, 77, 0.32);
+    }
+
+    .terminal-line.section {
+      color: var(--accent);
+      margin-top: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .terminal-line.item {
+      padding-left: 1.1rem;
+    }
+
+    .terminal-line .cursor {
+      display: inline-block;
+      width: 0.62ch;
+      margin-left: 0.08ch;
+      background: currentColor;
+      box-shadow: 0 0 10px currentColor;
+      animation: blink-caret 820ms step-end infinite;
+      vertical-align: -0.08em;
+    }
+
+    .terminal-status {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(124, 255, 155, 0.12);
+      color: var(--muted);
+      min-height: 1.6rem;
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding: 16px 10px 24px;
+      }
+
+      .experience {
+        min-height: calc(100vh - 40px);
+      }
+
+      .terminal-window {
+        min-height: 78vh;
+      }
+
+      .terminal-chrome {
+        padding: 12px 14px;
+        flex-wrap: wrap;
+      }
+
+      .terminal-title {
+        order: 3;
+        flex-basis: 100%;
+      }
+
+      .terminal-screen {
+        padding: 18px 14px 16px;
+        min-height: 70vh;
+      }
+
+      .terminal-line.item {
+        padding-left: 0.7rem;
+      }
+    }
+
+    @keyframes soft-rise {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes blink-caret {
+      0%,
+      49% {
+        opacity: 1;
+      }
+
+      50%,
+      100% {
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="shell">
+    <section class="experience">
+      <div class="terminal-window" aria-label="Terminale del menu di laurea">
+        <div class="terminal-chrome">
+          <div class="terminal-dots" aria-hidden="true">
+            <span class="terminal-dot"></span>
+            <span class="terminal-dot is-live"></span>
+            <span class="terminal-dot"></span>
+          </div>
+          <p class="terminal-title">menu_laurea.exe</p>
+          <p class="terminal-meta">streaming live</p>
+        </div>
+
+        <div class="terminal-screen">
+          <div id="terminalOutput" class="terminal-output" aria-live="polite"></div>
+          <p id="terminalStatus" class="terminal-status"></p>
+        </div>
+      </div>
+
+      <div hidden aria-hidden="true">
+        <div id="revealedMenu" class="revealed-menu"></div>
+        <section id="cardStage" class="card-stage">
+          <article id="revealCard" class="reveal-card">
+            <div id="frontIcon"></div>
+            <h2 id="frontCategory"></h2>
+            <h2 id="backCategory"></h2>
+            <ul id="backItems"></ul>
+            <p id="actionHint"></p>
+          </article>
+          <p id="stepProgress"></p>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const menuFlow = [
+      {
+        category: "Antipasti Centrali",
+        icon: "cloche",
+        items: [
+          {
+            name: "Fritti baresi",
+            details: [
+              { name: "popizze" },
+              { name: "sgaliozze", allergeni: ["Sesamo", "Lupini"] },
+              { name: "frittelline con salsa thai" }
+            ]
+          },
+          "Insalata di polpo agli agrumi",
+          "Involtini fumè",
+          "Patate cheddar e bacon",
+          "Antipasto all'italiana"
+        ],
+        allergeni: [
+          "Sgaliozze: Sesamo, Lupini",
+          "Pesce, Sedano",
+          "Lattosio",
+          "Lupini",
+          "Lattosio"
+        ]
+      },
+      {
+        category: "Primo",
+        icon: "pasta",
+        items: ["Mezze maniche con pesto di pistacchio e crema di bufala"],
+        allergeni: ["Frutta a guscio"]
+      },
+      {
+        category: "Secondo",
+        icon: "steak",
+        items: ["Tagliata rucola, grana e pomodorini"],
+        allergeni: ["Nichel, Lupini"]
+      },
+      {
+        category: "Frutta",
+        icon: "apple",
+        items: ["Macedonia di stagione con sorbetto"],
+        allergeni: ""
+      },
+      {
+        category: "Dolce",
+        icon: "cake",
+        items: ["Autoesplicativa l'immagine, no?"]
+      },
+      {
+        category: "Amari",
+        icon: "glass",
+        items: ["A sciacquare"]
+      },
+      {
+        category: "Bevande",
+        icon: "bottle",
+        items: [
+          "Acqua [Alcol], Birra e Vino unlimited. Bevete irresponsabilmente."],
+        allergeni: ["Glutine", "Solfiti"]
+      }
+    ];
+
+    const iconByType = {
+      cloche: `
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <path class="icon-stroke" style="--draw-delay:260ms;stroke-width:2.1" d="M24 56l42-28" />
+          <path class="icon-stroke" style="--draw-delay:430ms;stroke-width:2.1" d="M30 68l42-28" />
+
+          <circle class="icon-stroke" style="--draw-delay:700ms" cx="32.4" cy="50.4" r="4.2" />
+          <circle class="icon-fill" style="--fill-delay:980ms" cx="32.4" cy="50.4" r="1.2" />
+          <rect class="icon-stroke" style="--draw-delay:860ms" x="38.4" y="40.4" width="9.4" height="6.2" rx="2" transform="rotate(-34 43.1 43.5)" />
+          <circle class="icon-stroke" style="--draw-delay:1020ms" cx="53.4" cy="36.4" r="4.2" />
+          <circle class="icon-fill" style="--fill-delay:1260ms" cx="53.4" cy="36.4" r="1.2" />
+          <rect class="icon-stroke" style="--draw-delay:1180ms" x="57.4" y="27.7" width="9.4" height="6.2" rx="2" transform="rotate(-34 62.1 30.8)" />
+
+          <circle class="icon-stroke" style="--draw-delay:860ms" cx="38.4" cy="62.4" r="4.2" />
+          <circle class="icon-fill" style="--fill-delay:1140ms" cx="38.4" cy="62.4" r="1.2" />
+          <rect class="icon-stroke" style="--draw-delay:1020ms" x="44.4" y="52.5" width="9.4" height="6.2" rx="2" transform="rotate(-34 49.1 55.6)" />
+          <circle class="icon-stroke" style="--draw-delay:1180ms" cx="59.4" cy="48.4" r="4.2" />
+          <circle class="icon-fill" style="--fill-delay:1380ms" cx="59.4" cy="48.4" r="1.2" />
+          <rect class="icon-stroke" style="--draw-delay:1320ms" x="63.4" y="39.7" width="9.4" height="6.2" rx="2" transform="rotate(-34 68.1 42.8)" />
+
+          <path class="icon-accent" d="M40.6 43.6h3.3" />
+          <path class="icon-accent" d="M59.5 30.8h3.3" />
+          <path class="icon-accent" d="M46.6 55.6h3.3" />
+          <path class="icon-accent" d="M65.4 42.8h3.3" />
+        </svg>
+      `,
+      pasta: `
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <defs>
+            <mask id="pasta-front-cut" maskUnits="userSpaceOnUse">
+              <rect x="0" y="0" width="100" height="100" fill="white" />
+              <path d="M10 52H27c7 0 11 6 14 10 3-4 7-10 14-10h17c3 3 3 7-1 10 4 3 4 7 0 10 4 3 4 7 0 10 4 3 4 6 0 10H55c-7 0-11-6-14-10-3 4-7 10-14 10H10c-3-4-3-7 1-10-4-3-4-7 0-10-4-3-4-7 0-10-4-3-4-7-1-10z" fill="black" stroke="black" stroke-width="4" stroke-linejoin="round" />
+            </mask>
+          </defs>
+
+          <g mask="url(#pasta-front-cut)">
+            <path class="icon-stroke" style="stroke-width:2.25;--draw-delay:120ms" d="M35 24H52c7 0 11 6 14 10 3-4 7-10 14-10h17c3 3 3 7-1 10 4 3 4 7 0 10 4 3 4 7 0 10 4 3 4 6 0 10H80c-7 0-11-6-14-10-3 4-7 10-14 10H35c-3-4-3-7 1-10-4-3-4-7 0-10-4-3-4-7 0-10-4-3-4-7-1-10z" />
+            <path class="icon-stroke" style="stroke-width:2.25;--draw-delay:300ms" d="M58 36c3 4 11 4 14 0" />
+            <path class="icon-stroke" style="stroke-width:2.25;--draw-delay:420ms" d="M58 48c3-4 11-4 14 0" />
+          </g>
+
+          <path class="icon-stroke" style="stroke-width:2.25;--draw-delay:560ms" d="M10 52H27c7 0 11 6 14 10 3-4 7-10 14-10h17c3 3 3 7-1 10 4 3 4 7 0 10 4 3 4 7 0 10 4 3 4 6 0 10H55c-7 0-11-6-14-10-3 4-7 10-14 10H10c-3-4-3-7 1-10-4-3-4-7 0-10-4-3-4-7 0-10-4-3-4-7-1-10z" />
+          <path class="icon-stroke" style="stroke-width:2.25;--draw-delay:740ms" d="M33 64c3 4 11 4 14 0" />
+          <path class="icon-stroke" style="stroke-width:2.25;--draw-delay:860ms" d="M33 76c3-4 11-4 14 0" />
+        </svg>
+      `,
+      steak: `
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <path class="icon-stroke" style="--draw-duration:2200ms;--draw-delay:0ms" d="M15 66c-2-16 2-34 14-48C41 5 62 5 77 16c11 8 17 22 15 37" />
+          <path class="icon-stroke" style="--draw-duration:2200ms;--draw-delay:240ms" d="M16 70c0 11 4 19 11 23 8 4 14 1 19-8 6-12 14-17 28-19 9-1 14-5 18-11" />
+
+          <path class="icon-stroke" style="--draw-duration:2000ms;--draw-delay:520ms" d="M34 27h38" />
+          <path class="icon-stroke" style="--draw-duration:2000ms;--draw-delay:660ms" d="M29 34h18" />
+          <path class="icon-stroke" style="--draw-duration:2000ms;--draw-delay:780ms" d="M53 34h20" />
+          <path class="icon-stroke" style="--draw-duration:2000ms;--draw-delay:900ms" d="M25 41h22" />
+          <path class="icon-stroke" style="--draw-duration:2000ms;--draw-delay:1020ms" d="M73 41h8" />
+          <path class="icon-stroke" style="--draw-duration:2000ms;--draw-delay:1140ms" d="M23 48h26" />
+          <path class="icon-stroke" style="--draw-duration:2000ms;--draw-delay:1260ms" d="M67 48h16" />
+          <path class="icon-stroke" style="--draw-duration:2000ms;--draw-delay:1380ms" d="M22 55h52" />
+          <path class="icon-stroke" style="--draw-duration:2000ms;--draw-delay:1500ms" d="M19 62h54" />
+          <path class="icon-stroke" style="--draw-duration:2000ms;--draw-delay:1620ms" d="M19 69h30" />
+          <path class="icon-stroke" style="--draw-duration:2000ms;--draw-delay:1740ms" d="M23 76h16" />
+
+          <circle class="icon-stroke" style="--draw-duration:1800ms;--draw-delay:1940ms" cx="59" cy="42" r="6.6" />
+          <circle class="icon-fill" style="--fill-duration:700ms;--fill-delay:2500ms" cx="59" cy="42" r="1.3" />
+        </svg>
+      `,
+      apple: `
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <path class="icon-stroke" style="--draw-duration:1800ms;--draw-delay:120ms" d="M50 78c-4 2-8 2-12 1-9-2-16-11-19-24-2-9-1-18 4-25 5-7 13-10 21-8 3 1 5 2 6 3 1-1 3-2 6-3 8-2 16 1 21 8 5 7 6 16 4 25-3 13-10 22-19 24-4 1-8 1-12-1z" />
+          <path class="icon-stroke" style="--draw-duration:1400ms;--draw-delay:280ms" d="M50 25c0-8 0-13-4-16-3-2-6-2-8 0" />
+          <path class="icon-stroke" style="--draw-duration:1400ms;--draw-delay:460ms" d="M51 17c6-6 13-7 19-4 2 5 0 11-5 15-5 3-10 3-14 0z" />
+        </svg>
+      `,
+      cake: `
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <path class="icon-stroke" style="stroke-width:2.15;--draw-delay:120ms" d="M16 31c0-6 15-11 34-11s34 5 34 11-15 11-34 11-34-5-34-11z" />
+          <path class="icon-stroke" style="stroke-width:2.15;--draw-delay:260ms" d="M16 31v41" />
+          <path class="icon-stroke" style="stroke-width:2.15;--draw-delay:320ms" d="M84 31v41" />
+          <path class="icon-stroke" style="stroke-width:2.15;--draw-delay:460ms" d="M16 45C18 51 22 51 24 45C26 39 30 39 32 45C34 51 38 51 40 45C42 39 46 39 48 45C50 51 54 51 56 45C58 39 62 39 64 45C66 51 70 51 72 45C74 39 78 39 80 45C81 48 83 48 84 45" />
+          <path class="icon-stroke" style="stroke-width:2.15;--draw-delay:620ms" d="M16 58h68" />
+          <path class="icon-stroke" style="stroke-width:2.15;--draw-delay:760ms" d="M16 72c0 6 15 11 34 11s34-5 34-11" />
+
+          <path class="icon-stroke" style="stroke-width:2.15;--draw-delay:900ms" d="M50 15v13" />
+          <path class="icon-stroke" style="stroke-width:2.15;--draw-delay:980ms" d="M40 27v4" />
+          <path class="icon-stroke" style="stroke-width:2.15;--draw-delay:1060ms" d="M60 27v4" />
+          <circle class="icon-stroke" style="stroke-width:2.15;--draw-delay:1140ms" cx="50" cy="14" r="1.6" />
+        </svg>
+      `,
+      glass: `
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <path class="icon-stroke" style="stroke-width:2.35;--draw-delay:120ms" d="M24 20h52l-4 66H28z" />
+          <path class="icon-stroke" style="stroke-width:2.35;--draw-delay:320ms" d="M28 69h44" />
+
+          <path class="icon-stroke" style="stroke-width:2.35;--draw-delay:520ms" d="M46 33c4 5 4 11-2 15-5 4-11 4-15 0z" />
+          <path class="icon-stroke" style="stroke-width:2.35;--draw-delay:640ms" d="M36 44c5 1 8-1 10-5" />
+
+          <path class="icon-stroke" style="stroke-width:2.35;--draw-delay:780ms" d="M61 50c4 5 4 11-2 15-5 4-11 4-15 0z" />
+          <path class="icon-stroke" style="stroke-width:2.35;--draw-delay:900ms" d="M51 61c5 1 8-1 10-5" />
+        </svg>
+      `,
+      bottle: `
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <path class="icon-stroke" style="stroke-width:2.25;--draw-delay:120ms" d="M12 20h34l2 17c1 13-9 24-20 24S7 50 8 37z" />
+          <path class="icon-stroke" style="stroke-width:2.25;--draw-delay:280ms" d="M14 27h30" />
+          <path class="icon-stroke" style="stroke-width:2.25;--draw-delay:420ms" d="M28 61v21" />
+          <path class="icon-stroke" style="stroke-width:2.25;--draw-delay:540ms" d="M20 92l8-12 8 12z" />
+
+          <path class="icon-stroke" style="stroke-width:2.25;--draw-delay:640ms" d="M80 56v-8l5-5" />
+          <circle class="icon-stroke" style="stroke-width:2.25;--draw-delay:720ms" cx="70" cy="66" r="7.3" />
+          <circle class="icon-stroke" style="stroke-width:2.25;--draw-delay:780ms" cx="80" cy="66" r="7.3" />
+          <circle class="icon-stroke" style="stroke-width:2.25;--draw-delay:840ms" cx="90" cy="66" r="7.3" />
+          <circle class="icon-stroke" style="stroke-width:2.25;--draw-delay:900ms" cx="75" cy="76.5" r="7.3" />
+          <circle class="icon-stroke" style="stroke-width:2.25;--draw-delay:960ms" cx="85" cy="76.5" r="7.3" />
+          <circle class="icon-stroke" style="stroke-width:2.25;--draw-delay:1020ms" cx="80" cy="87" r="7.3" />
+        </svg>
+      `
+    };
+
+    const revealCard = document.getElementById("revealCard");
+    const cardStage = document.getElementById("cardStage");
+    const frontIcon = document.getElementById("frontIcon");
+    const frontCategory = document.getElementById("frontCategory");
+    const backCategory = document.getElementById("backCategory");
+    const backItems = document.getElementById("backItems");
+    const actionHint = document.getElementById("actionHint");
+    const stepProgress = document.getElementById("stepProgress");
+    const revealedMenu = document.getElementById("revealedMenu") || document.querySelector(".revealed-menu");
+
+    let activeIndex = 0;
+    let canFlip = false;
+    let hideTimeout = null;
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    const allergenBadges = {
+      glutine: { label: "Glutine" },
+      sedano: { label: "Sedano" },
+      "frutta-a-guscio": { label: "Frutta a guscio" },
+      pesce: { label: "Pesce" },
+      soia: { label: "Soia" },
+      "semi-di-sesamo": { label: "Semi di sesamo" },
+      arachidi: { label: "Arachidi" },
+      crostacei: { label: "Crostacei" },
+      uova: { label: "Uova" },
+      molluschi: { label: "Molluschi" },
+      latte: { label: "Latte" },
+      senape: { label: "Senape" },
+      "anidride-solforosa-e-solfiti": { label: "Anidride solforosa e solfiti" },
+      lupini: { label: "Lupini" },
+      nichel: { label: "Nichel" }
+    };
+
+    function normalizeAllergenName(value) {
+      const source = String(value || "").trim().toLowerCase();
+
+      if (!source) {
+        return "";
+      }
+
+      if (source === "lattosio") {
+        return "latte";
+      }
+
+      if (source === "sesamo") {
+        return "semi-di-sesamo";
+      }
+
+      if (source === "solfiti") {
+        return "anidride-solforosa-e-solfiti";
+      }
+
+      return source
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+    }
+
+    function extractAllergens(allergeni) {
+      if (!allergeni) {
+        return [];
+      }
+
+      if (Array.isArray(allergeni)) {
+        return allergeni.flatMap((entry) => extractAllergens(entry));
+      }
+
+      const text = String(allergeni).includes(":")
+        ? String(allergeni).split(":").slice(1).join(":")
+        : String(allergeni);
+
+      return text
+        .split(",")
+        .map((entry) => entry.trim())
+        .filter(Boolean);
+    }
+
+    function formatAllergenSymbol(allergeni) {
+      const allergenList = extractAllergens(allergeni);
+      if (!allergenList.length) {
+        return "";
+      }
+
+      const rendered = allergenList.map((name) => {
+        const key = normalizeAllergenName(name);
+        const badge = allergenBadges[key] || {
+          label: name
+        };
+        const safeLabel = escapeHtml(badge.label);
+        return `<span class="allergen-badge allergen-${key}" title="${safeLabel}" aria-label="${safeLabel}">${safeLabel}</span>`;
+      }).join("");
+
+      return `<span class="allergen-badges" aria-label="Allergeni">${rendered}</span>`;
+    }
+
+    function formatMenuItem(item, allergeni) {
+      if (item && typeof item === "object" && Array.isArray(item.details)) {
+        const details = item.details.map((detail) => {
+          const detailName = escapeHtml(detail.name);
+          return `${detailName}${formatAllergenSymbol(detail.allergeni)}`;
+        }).join(", ");
+
+        return `${escapeHtml(item.name)} (${details})`;
+      }
+
+      return `${escapeHtml(item)}${formatAllergenSymbol(allergeni)}`;
+    }
+
+    function getTypingDuration(text, multiplier = 42) {
+      const content = String(text || "");
+      return Math.min(Math.max(content.length * multiplier, 480), 2200);
+    }
+
+    function setTypedText(element, text, options = {}) {
+      if (!element) {
+        return;
+      }
+
+      const content = String(text ?? "").trim();
+      const span = document.createElement("span");
+      const delay = options.delay || 0;
+      const duration = options.duration || getTypingDuration(content, options.multiplier);
+
+      span.className = "type-text";
+      span.textContent = content;
+      span.style.setProperty("--typing-delay", `${delay}ms`);
+      span.style.setProperty("--typing-duration", `${duration}ms`);
+      span.style.setProperty("--typing-characters", Math.max(content.length, 1));
+
+      element.replaceChildren(span);
+
+      window.setTimeout(() => {
+        if (span.isConnected) {
+          span.classList.add("done");
+        }
+      }, delay + duration);
+    }
+
+    function primeStaticTypedText(selector, options = {}) {
+      const element = typeof selector === "string" ? document.querySelector(selector) : selector;
+      if (!element) {
+        return;
+      }
+
+      setTypedText(element, element.textContent, options);
+    }
+
+    function renderStep(index) {
+      const step = menuFlow[index];
+      if (!step) {
+        completeFlow();
+        return;
+      }
+
+      if (hideTimeout) {
+        clearTimeout(hideTimeout);
+        hideTimeout = null;
+      }
+      revealCard.classList.remove("flipped", "exiting");
+
+      frontIcon.innerHTML = iconByType[step.icon] || iconByType.cloche;
+      setTypedText(frontCategory, step.category, { delay: 120, multiplier: 48 });
+      setTypedText(backCategory, step.category, { delay: 120, multiplier: 48 });
+      backItems.innerHTML = step.items.map((item, itemIndex) => `<li>${formatMenuItem(item, step.allergeni?.[itemIndex])}</li>`).join("");
+
+      setTypedText(actionHint, "Toccami, car*", { delay: 420, multiplier: 38 });
+      setTypedText(stepProgress, `Categoria ${index + 1} di ${menuFlow.length}`, { delay: 240, multiplier: 36 });
+      canFlip = true;
+    }
+
+    function commitCurrentStep() {
+      const step = menuFlow[activeIndex];
+      const section = document.createElement("section");
+      const list = step.items.map((item, itemIndex) => `<li>${formatMenuItem(item, step.allergeni?.[itemIndex])}</li>`).join("");
+      const categoryIcon = iconByType[step.icon] || iconByType.cloche;
+      const menuTarget = document.getElementById("revealedMenu") || revealedMenu;
+
+      if (!menuTarget) {
+        console.warn("Container #revealedMenu non trovato.");
+        return;
+      }
+
+      section.className = "menu-section";
+      section.innerHTML = `
+        <h3 class="menu-section-title"><span class="section-icon" aria-hidden="true">${categoryIcon}</span><span class="section-title-copy"></span></h3>
+        <ul>${list}</ul>
+      `;
+
+      menuTarget.appendChild(section);
+      setTypedText(section.querySelector(".section-title-copy"), step.category, { delay: 120, multiplier: 40 });
+    }
+
+    function flipCard() {
+      if (!canFlip || revealCard.classList.contains("flipped")) {
+        return;
+      }
+
+      canFlip = false;
+      revealCard.classList.add("flipped");
+      setTypedText(actionHint, "Portate visibili.", { multiplier: 34 });
+
+      hideTimeout = setTimeout(() => {
+        commitCurrentStep();
+        revealCard.classList.add("exiting");
+        setTypedText(stepProgress, `Categoria ${activeIndex + 1} completata`, { multiplier: 34 });
+
+        setTimeout(() => {
+          activeIndex += 1;
+          renderStep(activeIndex);
+        }, 700);
+      }, 2000);
+    }
+
+    function onCardKeydown(event) {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        flipCard();
+      }
+    }
+
+    function completeFlow() {
+      cardStage.classList.add("done");
+      setTypedText(stepProgress, "Buona cena ed enjoy it!", { multiplier: 34 });
+      stepProgress.classList.add("final-toast");
+      const shellRoot = document.querySelector(".shell");
+      if (shellRoot && stepProgress.parentElement !== shellRoot) {
+        shellRoot.appendChild(stepProgress);
+      }
+    }
+
+    revealCard.addEventListener("click", flipCard);
+    revealCard.addEventListener("keydown", onCardKeydown);
+
+    primeStaticTypedText(".hero h1", { delay: 80, multiplier: 54 });
+    primeStaticTypedText(".menu-board h2", { delay: 260, multiplier: 46 });
+    renderStep(activeIndex);
+
+    const terminalOutput = document.getElementById("terminalOutput");
+    const terminalStatus = document.getElementById("terminalStatus");
+
+    function formatTerminalAllergens(allergeni) {
+      const names = extractAllergens(allergeni).map((entry) => {
+        const key = normalizeAllergenName(entry);
+        return (allergenBadges[key] && allergenBadges[key].label) || entry;
+      });
+
+      return names.length ? ` [${names.join(" | ")}]` : "";
+    }
+
+    function formatTerminalItem(item, allergeni) {
+      if (item && typeof item === "object" && Array.isArray(item.details)) {
+        const details = item.details.map((detail) => {
+          return `${detail.name}${formatTerminalAllergens(detail.allergeni)}`;
+        }).join(", ");
+
+        return `${item.name} (${details})`;
+      }
+
+      return `${String(item)}${formatTerminalAllergens(allergeni)}`;
+    }
+
+    function wait(ms) {
+      return new Promise((resolve) => window.setTimeout(resolve, ms));
+    }
+
+    function charDelay(character, minDelay, maxDelay) {
+      if (character === " ") {
+        return minDelay;
+      }
+
+      if (",.;:!?".includes(character)) {
+        return maxDelay + 36;
+      }
+
+      return Math.floor(Math.random() * (maxDelay - minDelay + 1)) + minDelay;
+    }
+
+    function scrollTerminal(targetLine = null) {
+      if (!terminalOutput) {
+        return;
+      }
+
+      if (targetLine && typeof targetLine.scrollIntoView === "function") {
+        targetLine.scrollIntoView({
+          block: "nearest",
+          inline: "nearest"
+        });
+        return;
+      }
+
+      terminalOutput.scrollTop = terminalOutput.scrollHeight;
+    }
+
+    async function typeTerminalLine(text, options = {}) {
+      const {
+        className = "",
+        minDelay = 8,
+        maxDelay = 20,
+        pauseAfter = 120
+      } = options;
+
+      const line = document.createElement("div");
+      const textNode = document.createTextNode("");
+      const cursor = document.createElement("span");
+
+      line.className = `terminal-line ${className}`.trim();
+      cursor.className = "cursor";
+      line.append(textNode, cursor);
+      terminalOutput.appendChild(line);
+      scrollTerminal(line);
+
+      for (const character of String(text)) {
+        textNode.textContent += character;
+        scrollTerminal(line);
+        await wait(charDelay(character, minDelay, maxDelay));
+      }
+
+      cursor.remove();
+      scrollTerminal(line);
+      await wait(pauseAfter);
+    }
+
+    async function typeTerminalStatus(text) {
+      terminalStatus.textContent = "";
+
+      for (const character of String(text)) {
+        terminalStatus.textContent += character;
+        scrollTerminal();
+        await wait(character === " " ? 20 : 42);
+      }
+    }
+
+    function detectLikelyDeviceName() {
+      const ua = String(navigator.userAgent || "").toLowerCase();
+      const platform = String(navigator.platform || "").toLowerCase();
+      const vendor = String(navigator.vendor || "").toLowerCase();
+      const userAgentData = navigator.userAgentData || null;
+      const hintedModel = String(userAgentData?.model || "").toLowerCase();
+      const hintedBrands = Array.isArray(userAgentData?.brands)
+        ? userAgentData.brands.map((entry) => String(entry.brand || "").toLowerCase()).join(" ")
+        : "";
+      const fingerprint = `${ua} ${platform} ${vendor} ${hintedModel} ${hintedBrands}`;
+
+      if (fingerprint.includes("iphone")) {
+        return "iPhone";
+      }
+
+      if (fingerprint.includes("ipad")) {
+        return "iPad";
+      }
+
+      if (fingerprint.includes("samsung") || fingerprint.includes("galaxy") || fingerprint.includes("sm-")) {
+        return "Samsung";
+      }
+
+      if (fingerprint.includes("xiaomi") || fingerprint.includes("redmi") || fingerprint.includes("poco")) {
+        return "Xiaomi";
+      }
+
+      if (fingerprint.includes("huawei")) {
+        return "Huawei";
+      }
+
+      if (fingerprint.includes("honor")) {
+        return "Honor";
+      }
+
+      if (fingerprint.includes("oneplus")) {
+        return "OnePlus";
+      }
+
+      if (fingerprint.includes("oppo")) {
+        return "Oppo";
+      }
+
+      if (fingerprint.includes("vivo")) {
+        return "Vivo";
+      }
+
+      if (fingerprint.includes("pixel") || fingerprint.includes("google")) {
+        return "Google Pixel";
+      }
+
+      if (fingerprint.includes("mac")) {
+        return "Mac";
+      }
+
+      if (fingerprint.includes("windows")) {
+        return "Windows PC";
+      }
+
+      if (fingerprint.includes("android")) {
+        return "Android device";
+      }
+
+      return "Unknown device";
+    }
+
+    async function detectPublicIp() {
+      const endpoints = [
+        "https://api.ipify.org?format=json",
+        "https://api64.ipify.org?format=json"
+      ];
+
+      for (const endpoint of endpoints) {
+        const controller = new AbortController();
+        const timeoutId = window.setTimeout(() => controller.abort(), 1800);
+
+        try {
+          const response = await fetch(endpoint, {
+            signal: controller.signal,
+            cache: "no-store"
+          });
+
+          if (!response.ok) {
+            continue;
+          }
+
+          const payload = await response.json();
+          const ip = String(payload?.ip || "").trim();
+
+          if (ip) {
+            return ip;
+          }
+        } catch (error) {
+          // Ignore and try the next endpoint.
+        } finally {
+          window.clearTimeout(timeoutId);
+        }
+      }
+
+      return "IP UNAVAILABLE";
+    }
+
+    async function streamMenuToTerminal() {
+      if (!terminalOutput || !terminalStatus) {
+        return;
+      }
+
+      terminalOutput.replaceChildren();
+      terminalStatus.textContent = "STATUS: fingerprinting device...";
+
+      await typeTerminalLine("Rilevamento dispositivo in uso....", {
+        className: "command",
+        minDelay: 18,
+        maxDelay: 32,
+        pauseAfter: 220
+      });
+
+      const publicIpPromise = detectPublicIp();
+      await wait(2400);
+      const deviceName = detectLikelyDeviceName().toUpperCase();
+      const publicIp = await publicIpPromise;
+      await typeTerminalLine(`device::DISPOSITIVO IDENTIFICATO -> ${deviceName} | IP: ${publicIp}`, {
+        className: "device",
+        minDelay: 20,
+        maxDelay: 36,
+        pauseAfter: 260
+      });
+
+      terminalStatus.textContent = "STATUS: scanning nearby networks...";
+
+      await typeTerminalLine("Connessione alla rete TIM-3248765235 in corso...", {
+        className: "command",
+        minDelay: 18,
+        maxDelay: 32,
+        pauseAfter: 260
+      });
+
+      const fakeHackLogs = [
+        "wifi::adapter up | chipset spoofed | monitor mode locked",
+        "net::chiave di autenticazione individuata | signal -47dBm | gateway fingerprint matched",
+        "bypass::controlli di sicurezza evitati | dhcp lease mirrored | route cloaked",
+        "payload::rilevazione menù effettuata | Buffet mappato",
+        "drinking::rimozione limite alcolici in corso...",
+        "drinking::limite rimosso con successo! | Alcol illimitato disponibile",
+        "life-saver::individuazione allergeni effettuata",
+        "decrypt::banchetto confermato | Renderizzazione menù in corso..",        
+        "loading::menù renderizzato con successo"
+      ];
+      const preMenuStart = performance.now();
+
+      for (const logLine of fakeHackLogs) {
+        await typeTerminalLine(logLine, {
+          className: "system",
+          minDelay: 12,
+          maxDelay: 22,
+          pauseAfter: 120
+        });
+      }
+
+      const remainingPrelude = Math.max(0, 3000 - (performance.now() - preMenuStart));
+      if (remainingPrelude) {
+        await wait(remainingPrelude);
+      }
+
+      await typeTerminalStatus("STATUS: tunnel established. Streaming hidden menu...");
+      await typeTerminalLine("guest@laurea:~$ ./menu_laurea --stream", {
+        className: "command",
+        minDelay: 18,
+        maxDelay: 30,
+        pauseAfter: 320
+      });
+
+      for (let index = 0; index < menuFlow.length; index += 1) {
+        const step = menuFlow[index];
+
+        await typeTerminalLine(`[${String(index + 1).padStart(2, "0")}] ${step.category}`, {
+          className: "section",
+          minDelay: 22,
+          maxDelay: 38,
+          pauseAfter: 180
+        });
+
+        for (let itemIndex = 0; itemIndex < step.items.length; itemIndex += 1) {
+          await typeTerminalLine(`- ${formatTerminalItem(step.items[itemIndex], step.allergeni?.[itemIndex])}`, {
+            className: "item",
+            minDelay: 16,
+            maxDelay: 28,
+            pauseAfter: 120
+          });
+        }
+      }
+
+      await typeTerminalLine("stream::complete - Declino ogni responsabilità per lancio di telefoni in preda allo spavento", {
+        className: "system",
+        minDelay: 18,
+        maxDelay: 32,
+        pauseAfter: 180
+      });
+      await typeTerminalStatus("STATUS: menu caricato. Buona cena ed enjoy it!");
+    }
+
+    streamMenuToTerminal();
+  </script>
+</body>
+
+</html>
